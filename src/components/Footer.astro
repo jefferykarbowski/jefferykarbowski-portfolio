@@ -1,0 +1,32 @@
+---
+const year = new Date().getFullYear();
+
+const links = [
+  { href: '#about', label: 'About' },
+  { href: '#services', label: 'Services' },
+  { href: '#projects', label: 'Projects' },
+  { href: '#experience', label: 'Experience' },
+  { href: '#contact', label: 'Contact' },
+];
+---
+
+<footer class="border-t border-slate-800/50 py-12">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-3">
+        <span class="text-lg font-bold text-white">JK<span class="text-accent">.</span></span>
+        <span class="text-sm text-slate-500">
+          &copy; {year} Jeff Karbowski. All rights reserved.
+        </span>
+      </div>
+
+      <nav class="flex flex-wrap items-center justify-center gap-6" aria-label="Footer navigation">
+        {links.map((link) => (
+          <a href={link.href} class="text-sm text-slate-500 hover:text-accent-light transition-colors">
+            {link.label}
+          </a>
+        ))}
+      </nav>
+    </div>
+  </div>
+</footer>

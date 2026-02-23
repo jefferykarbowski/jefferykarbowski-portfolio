@@ -1,0 +1,49 @@
+---
+const stats = [
+  { value: '18+', label: 'Years Experience' },
+  { value: '200+', label: 'Websites Built' },
+  { value: '30+', label: 'Active Repositories' },
+  { value: '12+', label: 'WordPress Plugins' },
+];
+---
+
+<section id="about" class="py-24 relative">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+      <!-- Text -->
+      <div class="animate-on-scroll">
+        <span class="text-accent text-sm font-semibold tracking-widest uppercase mb-4 block">About Me</span>
+        <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">
+          Engineering digital products that
+          <span class="gradient-text">make an impact</span>
+        </h2>
+        <div class="space-y-4 text-slate-400 leading-relaxed">
+          <p>
+            I'm a senior web engineer with over 18 years of experience building
+            everything from high-traffic e-commerce platforms to clinically-validated
+            health-tech systems. My work spans the full stack — React, Astro.js,
+            Vue, Node.js, PHP — with deep expertise in WordPress ecosystem
+            development and modern cloud infrastructure.
+          </p>
+          <p>
+            In recent years, I've embraced AI-augmented development workflows,
+            leveraging autonomous coding agents, MCP integrations, and intelligent
+            tooling to deliver higher-quality work faster. I believe the future of
+            software engineering is human-AI collaboration, and I'm building at
+            that frontier.
+          </p>
+        </div>
+      </div>
+
+      <!-- Stats grid -->
+      <div class="grid grid-cols-2 gap-5 stagger-children">
+        {stats.map((stat) => (
+          <div class="animate-on-scroll card-glow rounded-xl bg-navy-800/60 border border-slate-700/50 p-6 text-center">
+            <div class="text-4xl font-extrabold gradient-text mb-2">{stat.value}</div>
+            <div class="text-sm text-slate-400 font-medium">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

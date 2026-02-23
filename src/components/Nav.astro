@@ -1,0 +1,96 @@
+---
+const links = [
+  { href: '#about', label: 'About' },
+  { href: '#services', label: 'Services' },
+  { href: '#projects', label: 'Projects' },
+  { href: '#experience', label: 'Experience' },
+  { href: '#tech', label: 'Tech' },
+  { href: '#contact', label: 'Contact' },
+];
+---
+
+<nav id="main-nav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="#" class="text-lg font-bold text-white tracking-tight hover:text-accent-light transition-colors">
+      JK<span class="text-accent">.</span>
+    </a>
+
+    <!-- Desktop nav -->
+    <div class="hidden md:flex items-center gap-8">
+      {links.map((link) => (
+        <a href={link.href} class="nav-link">{link.label}</a>
+      ))}
+    </div>
+
+    <!-- Mobile hamburger -->
+    <button
+      id="mobile-toggle"
+      class="md:hidden flex flex-col gap-1.5 p-2 -mr-2"
+      aria-label="Toggle navigation menu"
+      aria-expanded="false"
+    >
+      <span class="block w-6 h-0.5 bg-slate-300 transition-all duration-300 origin-center" id="bar1"></span>
+      <span class="block w-6 h-0.5 bg-slate-300 transition-all duration-300" id="bar2"></span>
+      <span class="block w-6 h-0.5 bg-slate-300 transition-all duration-300 origin-center" id="bar3"></span>
+    </button>
+  </div>
+
+  <!-- Mobile nav overlay -->
+  <div id="mobile-nav" class="mobile-nav fixed inset-0 top-0 bg-navy-950/95 backdrop-blur-lg md:hidden z-40">
+    <div class="flex flex-col items-center justify-center h-full gap-8">
+      {links.map((link) => (
+        <a href={link.href} class="text-2xl font-semibold text-slate-200 hover:text-accent-light transition-colors mobile-nav-link">
+          {link.label}
+        </a>
+      ))}
+    </div>
+  </div>
+</nav>
+
+<script>
+  const nav = document.getElementById('main-nav')!;
+  const toggle = document.getElementById('mobile-toggle')!;
+  const mobileNav = document.getElementById('mobile-nav')!;
+  const bar1 = document.getElementById('bar1')!;
+  const bar2 = document.getElementById('bar2')!;
+  const bar3 = document.getElementById('bar3')!;
+  let isOpen = false;
+
+  // Scroll background
+  const updateNav = () => {
+    if (window.scrollY > 50) {
+      nav.classList.add('glass');
+    } else {
+      nav.classList.remove('glass');
+    }
+  };
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav();
+
+  // Mobile toggle
+  const toggleMenu = () => {
+    isOpen = !isOpen;
+    toggle.setAttribute('aria-expanded', String(isOpen));
+    mobileNav.classList.toggle('open', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+
+    if (isOpen) {
+      bar1.style.transform = 'rotate(45deg) translate(3px, 3px)';
+      bar2.style.opacity = '0';
+      bar3.style.transform = 'rotate(-45deg) translate(3px, -3px)';
+    } else {
+      bar1.style.transform = '';
+      bar2.style.opacity = '1';
+      bar3.style.transform = '';
+    }
+  };
+
+  toggle.addEventListener('click', toggleMenu);
+
+  // Close on link click
+  mobileNav.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      if (isOpen) toggleMenu();
+    });
+  });
+</script>

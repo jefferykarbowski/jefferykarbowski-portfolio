@@ -1,0 +1,82 @@
+---
+const experiences = [
+  {
+    period: '2023 — Present',
+    title: 'Lead Front-End Developer',
+    company: 'Solace Lifesciences',
+    description: 'Leading front-end architecture for NuCalm\'s health-tech platform. Building with Astro.js, React, and Cloudflare Workers for global edge delivery.',
+  },
+  {
+    period: '2022 — Present',
+    title: 'Founder',
+    company: 'TrailBlaze Creative',
+    description: 'Independent consultancy delivering full-stack web solutions, AI integration, and technical strategy for startups and established brands.',
+  },
+  {
+    period: '2018 — 2023',
+    title: 'Senior Front-End Developer',
+    company: 'ApisProductions',
+    description: 'Built complex web applications and interactive platforms. Led front-end architecture decisions and mentored junior developers.',
+  },
+  {
+    period: '2014 — 2018',
+    title: 'Senior Web Developer',
+    company: 'AltaCreative',
+    description: 'Developed custom WordPress solutions, e-commerce platforms, and client-facing web applications for diverse industries.',
+  },
+  {
+    period: '2007 — 2017',
+    title: 'Senior Front-End Developer',
+    company: 'Interact RV',
+    description: 'Built and maintained high-traffic web platforms for the recreational vehicle industry. Led front-end modernization initiatives.',
+  },
+  {
+    period: '2006 — Present',
+    title: 'Freelance Developer & Consultant',
+    company: 'Independent',
+    description: 'Ongoing client work spanning web development, WordPress solutions, and technical consulting across multiple industries.',
+  },
+];
+---
+
+<section id="experience" class="py-24 relative">
+  <div class="section-divider absolute top-0 left-0 right-0"></div>
+
+  <div class="max-w-4xl mx-auto px-6">
+    <div class="text-center mb-16 animate-on-scroll">
+      <span class="text-accent text-sm font-semibold tracking-widest uppercase mb-4 block">Career</span>
+      <h2 class="text-3xl sm:text-4xl font-bold text-white">
+        Professional <span class="gradient-text">experience</span>
+      </h2>
+    </div>
+
+    <div class="relative">
+      <!-- Timeline line -->
+      <div class="timeline-line" aria-hidden="true"></div>
+
+      <div class="space-y-12">
+        {experiences.map((exp, i) => (
+          <div class:list={[
+            'relative',
+            i % 2 === 0 ? 'md:pr-[calc(50%+2rem)]' : 'md:pl-[calc(50%+2rem)]',
+          ]}>
+            <!-- Dot -->
+            <div class="timeline-dot" aria-hidden="true"></div>
+
+            <div class:list={[
+              i % 2 === 0 ? 'animate-on-scroll-left' : 'animate-on-scroll-right',
+              'pl-12 md:pl-0',
+            ]}>
+              <div class="card-glow rounded-xl bg-navy-800/40 border border-slate-700/50 p-6">
+                <span class="text-accent text-sm font-semibold">{exp.period}</span>
+                <h3 class="text-lg font-bold text-white mt-1">{exp.title}</h3>
+                <p class="text-slate-300 text-sm font-medium mb-2">{exp.company}</p>
+                <p class="text-slate-400 text-sm leading-relaxed">{exp.description}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

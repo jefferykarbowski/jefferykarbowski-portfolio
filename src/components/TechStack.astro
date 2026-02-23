@@ -1,0 +1,48 @@
+---
+const technologies = [
+  { name: 'JavaScript', color: '#f7df1e' },
+  { name: 'TypeScript', color: '#3178c6' },
+  { name: 'React', color: '#61dafb' },
+  { name: 'Astro', color: '#ff5d01' },
+  { name: 'Vue.js', color: '#4fc08d' },
+  { name: 'Node.js', color: '#339933' },
+  { name: 'PHP', color: '#777bb4' },
+  { name: 'Tailwind CSS', color: '#06b6d4' },
+  { name: 'AWS', color: '#ff9900' },
+  { name: 'Cloudflare', color: '#f38020' },
+  { name: 'Firebase', color: '#ffca28' },
+  { name: 'WordPress', color: '#21759b' },
+  { name: 'Git', color: '#f05032' },
+  { name: 'Docker', color: '#2496ed' },
+  { name: 'PostHog', color: '#1d4aff' },
+];
+---
+
+<section id="tech" class="py-24 relative">
+  <div class="section-divider absolute top-0 left-0 right-0"></div>
+
+  <div class="max-w-5xl mx-auto px-6">
+    <div class="text-center mb-16 animate-on-scroll">
+      <span class="text-accent text-sm font-semibold tracking-widest uppercase mb-4 block">Technologies</span>
+      <h2 class="text-3xl sm:text-4xl font-bold text-white">
+        Tech <span class="gradient-text">stack</span>
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 stagger-children">
+      {technologies.map((tech) => (
+        <div class="animate-on-scroll tech-icon group">
+          <div
+            class="w-10 h-10 rounded-lg flex items-center justify-center text-lg font-bold transition-transform duration-300 group-hover:scale-110"
+            style={`background: ${tech.color}20; color: ${tech.color};`}
+          >
+            {tech.name.charAt(0)}
+          </div>
+          <span class="text-xs text-slate-400 font-medium text-center leading-tight group-hover:text-slate-200 transition-colors">
+            {tech.name}
+          </span>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

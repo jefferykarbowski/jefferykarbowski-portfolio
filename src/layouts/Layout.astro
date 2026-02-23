@@ -1,0 +1,91 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Jeff Karbowski — Senior Web Engineer & AI Integration Specialist',
+  description = 'Portfolio of Jeff Karbowski — 18+ years building high-impact digital products. Full-stack web development, cloud infrastructure, and AI-augmented engineering.',
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/og-image.png', Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Primary Meta -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:site_name" content="Jeff Karbowski" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Theme color -->
+    <meta name="theme-color" content="#060a13" />
+    <meta name="color-scheme" content="dark" />
+  </head>
+  <body class="min-h-screen overflow-x-hidden">
+    <slot />
+
+    <!-- Scroll animation observer -->
+    <script>
+      const selectors = '.animate-on-scroll, .animate-on-scroll-left, .animate-on-scroll-right';
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+            }
+          });
+        },
+        { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+      );
+
+      document.querySelectorAll(selectors).forEach((el) => observer.observe(el));
+
+      // Card glow mouse tracking
+      document.querySelectorAll('.card-glow').forEach((card) => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+          const x = ((e.clientX - rect.left) / rect.width) * 100;
+          const y = ((e.clientY - rect.top) / rect.height) * 100;
+          (e.currentTarget as HTMLElement).style.setProperty('--mouse-x', `${x}%`);
+          (e.currentTarget as HTMLElement).style.setProperty('--mouse-y', `${y}%`);
+        });
+      });
+    </script>
+  </body>
+</html>

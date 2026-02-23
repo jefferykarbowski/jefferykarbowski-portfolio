@@ -1,0 +1,83 @@
+---
+const projects = [
+  {
+    title: 'NuCalm Web Platform',
+    client: 'Solace Lifesciences',
+    description: 'Full-stack health-tech platform for clinically-proven neuroscience wellness technology. Architected the complete web experience from content delivery to user onboarding.',
+    tech: ['Astro.js', 'React', 'Cloudflare Workers', 'Firebase'],
+    accent: 'from-cyan-500/20 to-blue-500/20',
+    borderAccent: 'hover:border-cyan-500/30',
+  },
+  {
+    title: 'Eradicate Hate Global Summit',
+    client: 'Anti-hate Organization',
+    description: 'Membership management and participant directory for internationally recognized anti-hate organization. Custom WordPress plugins for complex user workflows.',
+    tech: ['WordPress', 'Custom Plugins', 'PHP', 'MySQL'],
+    accent: 'from-violet-500/20 to-purple-500/20',
+    borderAccent: 'hover:border-violet-500/30',
+  },
+  {
+    title: 'Carrier Matrix',
+    client: 'Insurance Platform',
+    description: 'Award-winning insurance carrier comparison platform enabling real-time rate analysis and carrier matching across multiple product lines.',
+    tech: ['Vue.js', 'REST APIs', 'Node.js', 'PostgreSQL'],
+    accent: 'from-emerald-500/20 to-teal-500/20',
+    borderAccent: 'hover:border-emerald-500/30',
+  },
+  {
+    title: 'Hearth Smart Kitchen',
+    client: 'IoT Platform',
+    description: 'IoT kiosk interface and web dashboard for smart kitchen management. Real-time device communication and kitchen workflow automation.',
+    tech: ['TypeScript', 'JavaScript', 'IoT', 'WebSockets'],
+    accent: 'from-orange-500/20 to-amber-500/20',
+    borderAccent: 'hover:border-orange-500/30',
+  },
+  {
+    title: 'Gravity Forms Repeater',
+    client: 'WordPress Plugin',
+    description: 'Advanced repeater field add-on for WordPress Gravity Forms. Enables dynamic, repeatable field groups with full validation and conditional logic support.',
+    tech: ['WordPress', 'PHP', 'JavaScript', 'Gravity Forms API'],
+    accent: 'from-rose-500/20 to-pink-500/20',
+    borderAccent: 'hover:border-rose-500/30',
+  },
+];
+---
+
+<section id="projects" class="py-24 relative">
+  <div class="section-divider absolute top-0 left-0 right-0"></div>
+
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-16 animate-on-scroll">
+      <span class="text-accent text-sm font-semibold tracking-widest uppercase mb-4 block">Featured Work</span>
+      <h2 class="text-3xl sm:text-4xl font-bold text-white">
+        Projects that <span class="gradient-text">deliver results</span>
+      </h2>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6 stagger-children">
+      {projects.map((project, i) => (
+        <div class:list={[
+          'animate-on-scroll card-glow rounded-xl bg-navy-800/40 border border-slate-700/50 p-7 transition-all duration-300',
+          project.borderAccent,
+          i === 0 ? 'md:col-span-2' : '',
+        ]}>
+          <div class={`absolute inset-0 rounded-xl bg-gradient-to-br ${project.accent} opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none`}></div>
+          <div class="flex flex-col sm:flex-row sm:items-start gap-4 mb-4">
+            <div class="flex-1">
+              <h3 class="text-xl font-bold text-white mb-1">{project.title}</h3>
+              <span class="text-accent text-sm font-medium">{project.client}</span>
+            </div>
+          </div>
+          <p class="text-slate-400 text-sm leading-relaxed mb-5">{project.description}</p>
+          <div class="flex flex-wrap gap-2">
+            {project.tech.map((t) => (
+              <span class="px-3 py-1 text-xs font-medium rounded-full bg-accent/10 text-accent-light border border-accent/20">
+                {t}
+              </span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
