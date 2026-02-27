@@ -1,0 +1,19 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="Virtual Tour Demo — Jeff Karbowski" description="Interactive virtual tour demo showcasing H3 Photography tour embedding.">
+  <Nav />
+  <main class="min-h-screen pt-24 pb-16">
+    <section class="max-w-5xl mx-auto px-6">
+      <h1 class="text-4xl font-bold text-white mb-4">Virtual Tour Demo</h1>
+      <p class="text-gray-400 mb-8">Interactive embedded virtual tour powered by H3 Photography.</p>
+      <div id="tour-container" class="w-full rounded-xl overflow-hidden border border-white/10">
+        <script src="https://dev-h3-photography.pantheonsite.io/wp-content/plugins/h3vt-tours-master/assets/js/h3vt-tours-embed.js" data-tour-id="719" defer></script>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
