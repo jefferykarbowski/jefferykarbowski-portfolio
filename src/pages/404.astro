@@ -1,0 +1,17 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+---
+
+<Layout title="404 — Page Not Found" description="The page you're looking for doesn't exist.">
+  <Nav />
+  <main class="min-h-screen flex items-center justify-center pt-24 pb-16">
+    <div class="text-center px-6">
+      <h1 class="text-7xl font-bold text-accent mb-4">404</h1>
+      <p class="text-xl text-slate-400 mb-8">Page not found.</p>
+      <a href="/" class="inline-flex items-center gap-2 px-6 py-3 bg-accent/10 text-accent-light border border-accent/30 rounded-lg hover:bg-accent/20 transition-colors">
+        ← Back Home
+      </a>
+    </div>
+  </main>
+</Layout>
