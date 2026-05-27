@@ -1,0 +1,1185 @@
+---
+// Landing page for Jeffery Karbowski's AI talk — standalone, no shared layout.
+// Scanned via QR from the printed handout.
+const title = "Jeffery Karbowski — AI Strategy & Implementation for Working Professionals";
+const description = "Eighteen years of web development experience, now applied to AI. Strategy, automation, and AI-native website builds for professionals who want to stop falling behind.";
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{title}</title>
+<meta name="description" content={description}>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..900,0..100&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style is:global>
+  :root {
+    --paper: #F4EFE3;
+    --paper-deep: #EBE3D2;
+    --paper-soft: #F8F4EB;
+    --ink: #1A1814;
+    --ink-soft: #4A4339;
+    --ink-faint: #8A8275;
+    --accent: #B5471E;
+    --accent-deep: #8B3414;
+    --accent-soft: rgba(181, 71, 30, 0.08);
+    --olive: #5C6B47;
+    --rule: rgba(26, 24, 20, 0.18);
+    --rule-strong: rgba(26, 24, 20, 0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(rgba(26, 24, 20, 0.025) 1px, transparent 1px),
+      radial-gradient(rgba(26, 24, 20, 0.018) 1px, transparent 1px);
+    background-size: 4px 4px, 7px 7px;
+    background-position: 0 0, 2px 2px;
+  }
+
+  a { color: inherit; }
+
+  /* ── LAYOUT ─────────────────────────────────────────── */
+  .container {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  section { padding: 80px 0; }
+
+  /* ── NAV ────────────────────────────────────────────── */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(244, 239, 227, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .nav-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 16px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .nav-mark {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "SOFT" 30, "opsz" 14;
+    font-weight: 600;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+  }
+  .nav-mark .amp {
+    font-style: italic;
+    font-variation-settings: "SOFT" 100;
+    color: var(--accent);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .nav-links a {
+    text-decoration: none;
+    color: var(--ink-soft);
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  .nav-cta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--paper);
+    background: var(--ink);
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: var(--accent); }
+
+  /* ── HERO ───────────────────────────────────────────── */
+  .hero {
+    padding: 100px 0 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "SOFT" 30, "opsz" 144;
+    font-weight: 500;
+    font-size: clamp(48px, 7vw, 92px);
+    line-height: 0.96;
+    letter-spacing: -0.035em;
+    max-width: 14ch;
+    margin-bottom: 32px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-variation-settings: "SOFT" 100, "opsz" 144;
+    color: var(--accent);
+    font-weight: 400;
+  }
+
+  .hero-lede {
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 52ch;
+    margin-bottom: 40px;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 16px 28px;
+    border-radius: 2px;
+    transition: all 0.25s;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .btn-primary:hover {
+    background: var(--accent);
+    transform: translateY(-1px);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--rule-strong);
+  }
+  .btn-ghost:hover {
+    border-color: var(--ink);
+    background: var(--paper-deep);
+  }
+  .btn .arrow { font-size: 14px; transition: transform 0.25s; }
+  .btn:hover .arrow { transform: translateX(4px); }
+
+  /* ── STATS STRIP ────────────────────────────────────── */
+  .stats {
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 40px 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+  }
+
+  .stat {
+    border-left: 2px solid var(--accent);
+    padding-left: 18px;
+  }
+  .stat:first-child { border-left: none; padding-left: 0; }
+
+  .stat-num {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "SOFT" 40, "opsz" 144;
+    font-weight: 600;
+    font-size: 44px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .stat-num em {
+    font-style: italic;
+    font-variation-settings: "SOFT" 100;
+    color: var(--accent);
+  }
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+
+  /* ── SECTION HEAD ───────────────────────────────────── */
+  .section-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-eyebrow .num {
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: 4px 8px;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "SOFT" 40, "opsz" 144;
+    font-weight: 500;
+    font-size: clamp(36px, 5vw, 56px);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    margin-bottom: 24px;
+    max-width: 18ch;
+  }
+  .section-title em {
+    font-style: italic;
+    font-variation-settings: "SOFT" 100;
+    color: var(--accent);
+    font-weight: 400;
+  }
+
+  .section-lede {
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 56ch;
+    margin-bottom: 56px;
+  }
+
+  /* ── ABOUT ──────────────────────────────────────────── */
+  .about {
+    background: var(--paper-soft);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 64px;
+    align-items: start;
+  }
+
+  .about-headline {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "SOFT" 40, "opsz" 144;
+    font-weight: 500;
+    font-size: clamp(28px, 3.4vw, 40px);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+  }
+  .about-headline em {
+    font-style: italic;
+    font-variation-settings: "SOFT" 100;
+    color: var(--accent);
+  }
+
+  .about-body {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .about-body p { margin-bottom: 18px; }
+  .about-body p:last-child { margin-bottom: 0; }
+  .about-body strong { color: var(--accent-deep); font-weight: 600; }
+
+  /* ── SERVICES ───────────────────────────────────────── */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+
+  .service-card {
+    background: var(--paper);
+    padding: 36px 32px;
+    transition: background 0.2s;
+  }
+  .service-card:hover { background: var(--paper-soft); }
+
+  .service-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+
+  .service-name {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "opsz" 144;
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 1.1;
+    margin-bottom: 12px;
+    letter-spacing: -0.015em;
+  }
+
+  .service-body {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+
+  /* ── PRICING ────────────────────────────────────────── */
+  .pricing {
+    background: var(--ink);
+    color: var(--paper);
+    background-image:
+      radial-gradient(rgba(244, 239, 227, 0.03) 1px, transparent 1px),
+      radial-gradient(rgba(244, 239, 227, 0.02) 1px, transparent 1px);
+    background-size: 4px 4px, 7px 7px;
+  }
+
+  .pricing .section-eyebrow { color: var(--accent); }
+  .pricing .section-eyebrow .num { background: rgba(181, 71, 30, 0.18); }
+  .pricing .section-title { color: var(--paper); }
+  .pricing .section-lede { color: var(--paper-deep); }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 56px;
+  }
+
+  .price-card {
+    background: rgba(244, 239, 227, 0.04);
+    border: 1px solid rgba(244, 239, 227, 0.12);
+    padding: 36px 32px;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: all 0.3s;
+  }
+  .price-card:hover {
+    background: rgba(244, 239, 227, 0.06);
+    border-color: rgba(244, 239, 227, 0.22);
+    transform: translateY(-4px);
+  }
+
+  .price-card.featured {
+    background: var(--paper);
+    color: var(--ink);
+    border-color: var(--accent);
+  }
+  .price-card.featured:hover {
+    background: var(--paper-soft);
+  }
+
+  .price-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: var(--paper);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+
+  .price-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .price-amount {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "SOFT" 30, "opsz" 144;
+    font-weight: 500;
+    font-size: 52px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 4px;
+  }
+  .price-amount .currency {
+    font-size: 28px;
+    vertical-align: super;
+    line-height: 1;
+    margin-right: 2px;
+    color: var(--ink-faint);
+  }
+  .price-card.featured .price-amount .currency { color: var(--ink-faint); }
+  .price-card:not(.featured) .price-amount .currency { color: var(--ink-faint); }
+
+  .price-period {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+  }
+  .price-card.featured .price-period { color: var(--ink-faint); }
+
+  .price-tag {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--paper-deep);
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(244, 239, 227, 0.12);
+  }
+  .price-card.featured .price-tag {
+    color: var(--ink-soft);
+    border-bottom-color: var(--rule);
+  }
+
+  .price-features {
+    list-style: none;
+    margin-bottom: 32px;
+    flex: 1;
+  }
+
+  .price-features li {
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 8px 0 8px 22px;
+    position: relative;
+    color: var(--paper);
+  }
+  .price-card.featured .price-features li { color: var(--ink); }
+
+  .price-features li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .price-cta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 14px 20px;
+    border-radius: 2px;
+    text-align: center;
+    transition: all 0.2s;
+    font-weight: 500;
+    border: 1px solid rgba(244, 239, 227, 0.3);
+    color: var(--paper);
+  }
+  .price-cta:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .price-card.featured .price-cta {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .price-card.featured .price-cta:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .pricing-note {
+    margin-top: 40px;
+    text-align: center;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--paper-deep);
+    max-width: 60ch;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+  }
+  .pricing-note em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  /* ── PROCESS ────────────────────────────────────────── */
+  .process-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+    margin-top: 16px;
+    counter-reset: step;
+  }
+
+  .process-step {
+    position: relative;
+    counter-increment: step;
+  }
+
+  .process-step::before {
+    content: '0' counter(step);
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "opsz" 144;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 56px;
+    line-height: 0.9;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 18px;
+    letter-spacing: -0.04em;
+  }
+
+  .process-step h4 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .process-step p {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+
+  /* ── FAQ ────────────────────────────────────────────── */
+  .faq-list {
+    max-width: 760px;
+    border-top: 1px solid var(--rule);
+  }
+
+  details {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 22px 0;
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 19px;
+    letter-spacing: -0.01em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    transition: color 0.2s;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary:hover { color: var(--accent); }
+
+  summary::after {
+    content: '+';
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 24px;
+    color: var(--accent);
+    font-weight: 300;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+  details[open] summary::after { transform: rotate(45deg); }
+
+  details > p {
+    padding: 0 0 24px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 65ch;
+  }
+
+  /* ── FINAL CTA ──────────────────────────────────────── */
+  .final-cta {
+    background: var(--accent);
+    color: var(--paper);
+    text-align: center;
+    padding: 100px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .final-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(rgba(244, 239, 227, 0.06) 1px, transparent 1px);
+    background-size: 6px 6px;
+    pointer-events: none;
+  }
+
+  .final-cta-inner { position: relative; }
+
+  .final-cta-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: rgba(244, 239, 227, 0.7);
+    margin-bottom: 28px;
+  }
+
+  .final-cta h2 {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "SOFT" 50, "opsz" 144;
+    font-weight: 500;
+    font-size: clamp(40px, 5.5vw, 72px);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+    max-width: 18ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .final-cta h2 em {
+    font-style: italic;
+    font-variation-settings: "SOFT" 100;
+    color: var(--ink);
+  }
+
+  .final-cta-lede {
+    font-size: 19px;
+    line-height: 1.5;
+    color: rgba(244, 239, 227, 0.92);
+    max-width: 48ch;
+    margin: 0 auto 40px;
+  }
+
+  .final-cta .btn-primary {
+    background: var(--ink);
+    font-size: 13px;
+    padding: 18px 36px;
+  }
+  .final-cta .btn-primary:hover { background: var(--paper); color: var(--ink); }
+
+  /* ── FOOTER ─────────────────────────────────────────── */
+  footer {
+    background: var(--ink);
+    color: var(--paper-deep);
+    padding: 56px 0 32px;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid rgba(244, 239, 227, 0.12);
+  }
+
+  .footer-brand {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "SOFT" 30;
+    font-weight: 600;
+    font-size: 28px;
+    color: var(--paper);
+    margin-bottom: 12px;
+    letter-spacing: -0.015em;
+  }
+  .footer-brand .amp {
+    font-style: italic;
+    font-variation-settings: "SOFT" 100;
+    color: var(--accent);
+  }
+  .footer-tag {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--paper-deep);
+    max-width: 36ch;
+    line-height: 1.4;
+  }
+
+  .footer-col h5 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .footer-col a, .footer-col span {
+    display: block;
+    font-size: 14px;
+    color: var(--paper);
+    text-decoration: none;
+    margin-bottom: 8px;
+    transition: color 0.2s;
+  }
+  .footer-col a:hover { color: var(--accent); }
+
+  .footer-base {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+  }
+
+  /* ── RESPONSIVE ─────────────────────────────────────── */
+  @media (max-width: 880px) {
+    section { padding: 60px 0; }
+    .nav-links { display: none; }
+    .nav-inner { padding: 14px 24px; }
+    .container { padding: 0 24px; }
+    .stats { grid-template-columns: 1fr 1fr; gap: 24px; }
+    .stat { border-left: none; padding-left: 0; }
+    .about-grid { grid-template-columns: 1fr; gap: 32px; }
+    .services-grid { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; gap: 16px; }
+    .price-card.featured { transform: none; order: -1; }
+    .process-grid { grid-template-columns: 1fr 1fr; gap: 32px 24px; }
+    .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+    .footer-base { flex-direction: column; gap: 12px; }
+    .hero { padding: 60px 0 40px; }
+  }
+
+  @media (max-width: 540px) {
+    .process-grid { grid-template-columns: 1fr; }
+    .hero-ctas { flex-direction: column; align-items: stretch; }
+    .btn { justify-content: center; }
+  }
+
+  /* ── REVEAL ANIMATION ───────────────────────────────── */
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .reveal { opacity: 0; }
+  .reveal.in {
+    animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  }
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-mark" style="text-decoration: none;">Jeffery <span class="amp">&amp;</span> AI</a>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#services">Services</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <a href="https://calendly.com/jefferykarbowski/30min" target="_blank" rel="noopener" class="nav-cta">Book a Call ↗</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">Welcome — Glad You Scanned</div>
+    <h1>Use AI like you've been doing this <em>for years.</em></h1>
+    <p class="hero-lede">
+      I'm Jeffery — eighteen years building websites, now applying that same craft
+      to AI strategy, automation, and AI-native development for working professionals
+      who'd rather get fluent than get left behind.
+    </p>
+    <div class="hero-ctas">
+      <a href="https://calendly.com/jefferykarbowski/30min" target="_blank" rel="noopener" class="btn btn-primary">Book a Free 30-Min Audit <span class="arrow">→</span></a>
+      <a href="#pricing" class="btn btn-ghost">See Pricing</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section style="padding: 0;">
+  <div class="container">
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">18<em>+</em></div>
+        <div class="stat-label">Years Building<br>the Web</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">100<em>+</em></div>
+        <div class="stat-label">Sites &amp; Apps<br>Shipped</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">3<em>x</em></div>
+        <div class="stat-label">Faster Delivery<br>with AI</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">1</div>
+        <div class="stat-label">Mission — Make AI<br>Actually Useful</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div>
+        <div class="section-eyebrow"><span class="num">01</span> Who I Am</div>
+        <h2 class="about-headline">
+          The web has been my craft <em>since 2007.</em> AI is what makes it sing.
+        </h2>
+      </div>
+      <div class="about-body">
+        <p>
+          I run <strong>Apex Chute LLC</strong> out of Midland, Michigan — an
+          AI-native web development and strategy practice serving local
+          businesses, mission-driven nonprofits, and the UN-recognized
+          Eradicate Hate Global Summit. I also lead front-end engineering at
+          Solace Lifesciences and operate TrailBlaze Creative on the agency side.
+        </p>
+        <p>
+          When AI showed up, I didn't sit on the sidelines. I rebuilt my entire
+          workflow around it: agentic automation, MCP servers, Claude Code as a
+          pair-programming partner, AI-driven A/B testing, automated SEO at scale.
+          The result is a development practice that ships three times faster and
+          a consulting practice that helps other professionals get there too.
+        </p>
+        <p>
+          This page exists for one reason: <strong>you've thought about AI, you
+          know you should be using it more, and you need someone who's already
+          lived the learning curve.</strong> That's the work.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="container">
+    <div class="section-eyebrow"><span class="num">02</span> What I Build</div>
+    <h2 class="section-title">Six ways we might <em>work together.</em></h2>
+    <p class="section-lede">
+      Some clients want a website. Others want a system. A few want both, plus
+      a plan for the next twelve months. All of it lives under the same roof.
+    </p>
+
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-num">→ 01</div>
+        <h3 class="service-name">AI-Native Website Builds</h3>
+        <p class="service-body">
+          Sites architected with AI in the workflow from day one — faster to ship,
+          easier to maintain, built to convert. Astro, WordPress, or whatever fits.
+        </p>
+      </div>
+      <div class="service-card">
+        <div class="service-num">→ 02</div>
+        <h3 class="service-name">Workflow Automation</h3>
+        <p class="service-body">
+          The busywork — content scheduling, lead follow-up, reporting,
+          publishing — done for you with custom agents that run while you sleep.
+        </p>
+      </div>
+      <div class="service-card">
+        <div class="service-num">→ 03</div>
+        <h3 class="service-name">AI Strategy Sessions</h3>
+        <p class="service-body">
+          "Where do I even start?" — answered in one focused session, with a
+          documented plan you can hand to your team or execute solo.
+        </p>
+      </div>
+      <div class="service-card">
+        <div class="service-num">→ 04</div>
+        <h3 class="service-name">SEO &amp; Content Systems</h3>
+        <p class="service-body">
+          AI-powered audits, content engines, and ongoing optimization that
+          actually moves rankings — not vanity metrics.
+        </p>
+      </div>
+      <div class="service-card">
+        <div class="service-num">→ 05</div>
+        <h3 class="service-name">WordPress Modernization</h3>
+        <p class="service-body">
+          Aging WordPress sites brought into the AI era — performance,
+          security, conversions — without starting over from scratch.
+        </p>
+      </div>
+      <div class="service-card">
+        <div class="service-num">→ 06</div>
+        <h3 class="service-name">Conversion Programs</h3>
+        <p class="service-body">
+          AI-augmented A/B testing pipelines that learn what your customers
+          actually respond to — and act on it month over month.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="section-eyebrow"><span class="num">03</span> The Investment</div>
+    <h2 class="section-title">Three ways to <em>get started.</em></h2>
+    <p class="section-lede">
+      All plans are month-to-month — no long contracts, no surprise fees.
+      Stay as long as I'm earning my keep. Project work and custom scopes
+      quoted separately.
+    </p>
+
+    <div class="pricing-grid">
+
+      <!-- TIER 1 -->
+      <div class="price-card">
+        <div class="price-name">Kickstart</div>
+        <div class="price-amount"><span class="currency">$</span>497</div>
+        <div class="price-period">per month</div>
+        <div class="price-tag">For solopreneurs &amp; small teams getting their feet wet.</div>
+        <ul class="price-features">
+          <li>Monthly 60-minute strategy call</li>
+          <li>One AI workflow built &amp; deployed each month</li>
+          <li>Tools &amp; stack recommendations</li>
+          <li>Email support, 24-hour response</li>
+          <li>Quarterly progress review</li>
+        </ul>
+        <a href="https://calendly.com/jefferykarbowski/30min" target="_blank" rel="noopener" class="price-cta">Start Here →</a>
+      </div>
+
+      <!-- TIER 2 -->
+      <div class="price-card featured">
+        <div class="price-badge">Most Popular</div>
+        <div class="price-name">Growth</div>
+        <div class="price-amount"><span class="currency">$</span>1,497</div>
+        <div class="price-period">per month</div>
+        <div class="price-tag">For established businesses ready to compound the advantage.</div>
+        <ul class="price-features">
+          <li>Bi-weekly 60-minute strategy calls</li>
+          <li>Three AI workflows built per month</li>
+          <li>AI-powered content calendar &amp; SEO</li>
+          <li>Monthly performance reporting</li>
+          <li>Priority email &amp; Slack support</li>
+          <li>One small website / landing page update</li>
+        </ul>
+        <a href="https://calendly.com/jefferykarbowski/30min" target="_blank" rel="noopener" class="price-cta">Pick Growth →</a>
+      </div>
+
+      <!-- TIER 3 -->
+      <div class="price-card">
+        <div class="price-name">Partnership</div>
+        <div class="price-amount"><span class="currency">$</span>3,997</div>
+        <div class="price-period">per month</div>
+        <div class="price-tag">For companies treating AI as strategic infrastructure.</div>
+        <ul class="price-features">
+          <li>Weekly strategy calls + Slack channel</li>
+          <li>Unlimited workflow builds &amp; iterations</li>
+          <li>Custom MCP &amp; agent integrations</li>
+          <li>Done-for-you A/B testing program</li>
+          <li>Full SEO &amp; content engine management</li>
+          <li>White-glove implementation support</li>
+        </ul>
+        <a href="https://calendly.com/jefferykarbowski/30min" target="_blank" rel="noopener" class="price-cta">Let's Talk →</a>
+      </div>
+
+    </div>
+
+    <p class="pricing-note">
+      Not sure which fits? <em>Start with a free 30-minute audit</em> — I'll
+      tell you honestly which tier (if any) makes sense for where you are.
+    </p>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section>
+  <div class="container">
+    <div class="section-eyebrow"><span class="num">04</span> How It Works</div>
+    <h2 class="section-title">From <em>"I should be doing this"</em> to shipping.</h2>
+
+    <div class="process-grid">
+      <div class="process-step">
+        <h4>The Audit</h4>
+        <p>Free 30-minute call. I learn your business, your bottlenecks, your goals. You leave with three quick wins — no obligation.</p>
+      </div>
+      <div class="process-step">
+        <h4>The Plan</h4>
+        <p>If we're a fit, I draft a focused 90-day roadmap with priorities, tools, and outcomes. Approve it and we start.</p>
+      </div>
+      <div class="process-step">
+        <h4>The Build</h4>
+        <p>Workflows go live within the first two weeks. You're trained, documented, and supported every step.</p>
+      </div>
+      <div class="process-step">
+        <h4>The Compound</h4>
+        <p>Monthly reviews. New systems added. Old ones refined. The advantage builds on itself, month over month.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="about" id="faq">
+  <div class="container">
+    <div class="section-eyebrow"><span class="num">05</span> Honest Answers</div>
+    <h2 class="section-title">The questions <em>everyone</em> asks.</h2>
+
+    <div class="faq-list">
+      <details>
+        <summary>I'm not technical — is this going to be over my head?</summary>
+        <p>No. My entire job is translating between AI capability and real business
+        outcomes. You don't need to know what an LLM is. You need to know what you
+        want to spend less time on, and I'll handle the rest.</p>
+      </details>
+      <details>
+        <summary>How is this different from hiring an agency?</summary>
+        <p>You work with me directly. No account managers, no junior team members
+        learning on your dime. I've been doing this for eighteen years and I'm the
+        one in your inbox.</p>
+      </details>
+      <details>
+        <summary>What tools will I end up paying for?</summary>
+        <p>Most clients spend $20–$200/month on actual AI subscriptions (Claude,
+        ChatGPT, automation tools). I'll always recommend the cheapest stack that
+        gets the job done — and tell you when free tools are enough.</p>
+      </details>
+      <details>
+        <summary>Can I cancel anytime?</summary>
+        <p>Yes. Every retainer is month-to-month with 14 days' notice. If I'm not
+        earning my keep, you shouldn't be paying me.</p>
+      </details>
+      <details>
+        <summary>Do you do project-based work too?</summary>
+        <p>Yes — one-off website builds, audits, and implementation projects are
+        quoted separately. Let's talk on the audit call.</p>
+      </details>
+      <details>
+        <summary>Is my data safe?</summary>
+        <p>Yes. I use enterprise-grade tools, signed agreements where appropriate,
+        and never train public models on your private information.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta" id="contact">
+  <div class="container final-cta-inner">
+    <div class="final-cta-eyebrow">▸ The Offer Stands</div>
+    <h2>A free 30-minute audit. <em>Three quick wins.</em> No strings.</h2>
+    <p class="final-cta-lede">
+      Bring me your business, your bottlenecks, and your biggest "what if."
+      You'll leave with three things you can do this week — whether we work
+      together or not.
+    </p>
+    <a href="https://calendly.com/jefferykarbowski/30min" target="_blank" rel="noopener" class="btn btn-primary">
+      Book Your Audit <span class="arrow">→</span>
+    </a>
+    <p style="margin-top: 28px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.12em; color: rgba(244, 239, 227, 0.7);">
+      OR EMAIL · <a href="mailto:jefferykarbowski@gmail.com?subject=AI%20Audit%20Request" style="color: inherit;">JEFFERYKARBOWSKI@GMAIL.COM</a> · CALL · 989.600.5413
+    </p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">Jeffery <span class="amp">&amp;</span> AI</div>
+        <p class="footer-tag">
+          AI strategy, automation, and AI-native web development — built by
+          someone who's been shipping for the web since 2007.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h5>Contact</h5>
+        <a href="mailto:jefferykarbowski@gmail.com">jefferykarbowski@gmail.com</a>
+        <a href="tel:9896005413">989.600.5413</a>
+        <span>Midland, Michigan</span>
+      </div>
+      <div class="footer-col">
+        <h5>Navigate</h5>
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+      </div>
+    </div>
+    <div class="footer-base">
+      <span>© 2026 Apex Chute LLC · All rights reserved</span>
+      <span>Set in Fraunces &amp; Manrope</span>
+    </div>
+  </div>
+</footer>
+
+<script is:inline>
+  // Subtle scroll reveal — gentle staggered entrance for each section
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+
+  document.querySelectorAll('section').forEach(s => {
+    s.classList.add('reveal');
+    observer.observe(s);
+  });
+</script>
+
+</body>
+</html>
