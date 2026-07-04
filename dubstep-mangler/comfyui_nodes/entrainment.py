@@ -58,21 +58,76 @@ def _edge_fade(x: np.ndarray, sr: int, ms: float = 30.0) -> np.ndarray:
     return x
 
 
+def _smooth_noise(n: int, sr: int, rate_hz: float, seed: int) -> np.ndarray:
+    """Band-limited random walk in [-1, 1], ~rate_hz wiggles per second. Used to
+    make entrainment parameters wander so the brain can't habituate to a fixed
+    pattern and tune it out."""
+    rng = np.random.default_rng(seed)
+    n_ctrl = max(int(n / sr * rate_hz) + 2, 2)
+    ctrl = rng.uniform(-1, 1, n_ctrl)
+    xp = np.linspace(0, n, n_ctrl)
+    walk = np.interp(np.arange(n), xp, ctrl)
+    return walk / (np.abs(walk).max() + 1e-9)
+
+
+def _ease(curve: str, n: int) -> np.ndarray:
+    """0..1 progression. 'ease' spends longer near the top (gentle onset) then
+    settles — a smoother iso-principle descent than a straight line."""
+    t = np.linspace(0, 1, n)
+    if curve == "ease":
+        return t * t * (3 - 2 * t)  # smoothstep
+    if curve == "slow_settle":
+        return 1 - (1 - t) ** 2  # decelerate into the target
+    return t
+
+
 def binaural_beats(
     n: int,
     sr: int,
-    carrier_hz: float = 220.0,
+    carrier_hz: float = 200.0,
     beat_start_hz: float = 10.0,
     beat_end_hz: float | None = None,
+    drift_hz: float = 0.6,
+    curve: str = "ease",
+    seed: int = 0,
 ) -> np.ndarray:
     """Stereo (2, n): left ear gets the carrier, right ear gets carrier + beat.
-    The beat frequency can sweep (e.g. alpha 10 Hz down to theta 6 Hz for a
-    guided descent). Headphones required."""
+
+    The beat glides from beat_start_hz to beat_end_hz following `curve` (the
+    iso-principle descent, e.g. alpha 10.5 Hz -> theta 5 Hz). A slow band-limited
+    random walk of +/- drift_hz is layered on so the beat never sits at a fixed,
+    predictable rate — this is the anti-habituation mechanism: a perfectly steady
+    beat gets modelled and ignored by the cortex, a gently wandering one keeps
+    pulling the frequency-following response. Headphones required."""
     beat_end_hz = beat_start_hz if beat_end_hz is None else beat_end_hz
-    beat = np.linspace(beat_start_hz, beat_end_hz, n)
-    left = np.sin(_phase(carrier_hz, n, sr))
-    right = np.sin(_phase(carrier_hz + beat, n, sr))
-    return _edge_fade(np.stack([left, right]).astype(np.float32), sr)
+    prog = _ease(curve, n)
+    beat = beat_start_hz + (beat_end_hz - beat_start_hz) * prog
+    if drift_hz > 0:
+        beat = beat + drift_hz * _smooth_noise(n, sr, rate_hz=0.05, seed=seed)
+    beat = np.clip(beat, 0.5, 45.0)
+    # a whisper of carrier drift too, so even the tone isn't perfectly static
+    carrier = carrier_hz * (1 + 0.01 * _smooth_noise(n, sr, 0.03, seed + 1))
+    left = np.sin(_phase(carrier, n, sr))
+    right = np.sin(_phase(carrier + beat, n, sr))
+    return _edge_fade(np.stack([left, right]).astype(np.float32), sr, ms=250)
+
+
+def rms(x: np.ndarray) -> float:
+    return float(np.sqrt(np.mean(np.square(x))) + 1e-12)
+
+
+def mix_subliminal(
+    music: np.ndarray, layer: np.ndarray, db_below: float = 32.0
+) -> np.ndarray:
+    """Blend an entrainment `layer` under `music` at db_below dB beneath the
+    music's RMS — i.e. near or below conscious audibility, felt not heard. Both
+    (2, n). Research favours unmasked-but-quiet beats: present enough to entrain,
+    too low to become a foreground pattern the listener fixates on."""
+    target = rms(music) * (10 ** (-abs(db_below) / 20))
+    layer = layer * (target / rms(layer))
+    out = music + layer
+    peak = np.abs(out).max() or 1.0
+    return (out / max(peak, 1.0)).astype(np.float32) if peak > 1.0 else out.astype(np.float32)
 
 
 def isochronic_tones(
@@ -83,12 +138,20 @@ def isochronic_tones(
     rate_end_hz: float | None = None,
     duty: float = 0.5,
     softness: float = 0.15,
+    drift_hz: float = 0.4,
+    curve: str = "ease",
+    seed: int = 0,
 ) -> np.ndarray:
     """Mono (n,): a carrier switched fully on/off at the pulse rate — the
     speaker-friendly sibling of binaural beats. `softness` rounds the pulse
-    edges (raised-cosine) to avoid clicks; `duty` is the on-fraction."""
+    edges (raised-cosine) to avoid clicks; `duty` is the on-fraction. The rate
+    follows the iso-principle `curve` from start to end and wanders by +/-
+    drift_hz (anti-habituation)."""
     rate_end_hz = rate_start_hz if rate_end_hz is None else rate_end_hz
-    rate = np.linspace(rate_start_hz, rate_end_hz, n)
+    rate = rate_start_hz + (rate_end_hz - rate_start_hz) * _ease(curve, n)
+    if drift_hz > 0:
+        rate = rate + drift_hz * _smooth_noise(n, sr, rate_hz=0.05, seed=seed)
+    rate = np.clip(rate, 0.5, 45.0)
     cycle = (np.cumsum(rate) / sr) % 1.0  # 0..1 position within each pulse
     gate = np.clip((duty - np.abs(cycle - duty / 2) * 2) / max(softness * duty, 1e-4), 0, 1)
     gate = 0.5 - 0.5 * np.cos(np.pi * gate)  # raised-cosine edges

@@ -1,0 +1,76 @@
+{
+  "last_node_id": 4,
+  "last_link_id": 3,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "LoadAudio",
+      "pos": [40, 220],
+      "size": [320, 140],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "outputs": [{"name": "AUDIO", "type": "AUDIO", "links": [1]}],
+      "properties": {"Node name for S&R": "LoadAudio"},
+      "widgets_values": ["song.wav", null]
+    },
+    {
+      "id": 2,
+      "type": "HypnagogicWeave",
+      "pos": [420, 160],
+      "size": [360, 280],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [{"name": "audio", "type": "AUDIO", "link": 1}],
+      "outputs": [
+        {"name": "audio", "type": "AUDIO", "links": [2]},
+        {"name": "structure_json", "type": "STRING", "links": null}
+      ],
+      "properties": {"Node name for S&R": "HypnagogicWeave"},
+      "widgets_values": [180.0, "pentatonic_minor", 66.0, 50.0, 1.0, 0, "fixed"]
+    },
+    {
+      "id": 3,
+      "type": "BinauralBeats",
+      "pos": [840, 140],
+      "size": [380, 360],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [{"name": "audio", "type": "AUDIO", "link": 2}],
+      "outputs": [{"name": "AUDIO", "type": "AUDIO", "links": [3]}],
+      "properties": {"Node name for S&R": "BinauralBeats"},
+      "widgets_values": [
+        "custom", 200.0,
+        "alpha (relaxation, 10 Hz)", 10.5,
+        "theta (meditation, 6 Hz)", 5.0,
+        32.0, 0.6, "ease", 0, 0.2, 180.0
+      ]
+    },
+    {
+      "id": 4,
+      "type": "SaveAudio",
+      "pos": [1280, 240],
+      "size": [320, 120],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [{"name": "audio", "type": "AUDIO", "link": 3}],
+      "properties": {"Node name for S&R": "SaveAudio"},
+      "widgets_values": ["audio/hypnagogic_weave"]
+    }
+  ],
+  "links": [
+    [1, 1, 0, 2, 0, "AUDIO"],
+    [2, 2, 0, 3, 0, "AUDIO"],
+    [3, 3, 0, 4, 0, "AUDIO"]
+  ],
+  "groups": [
+    {"title": "song -> genreless hypnagogic music -> subliminal alpha->theta descent",
+     "bounding": [30, 90, 1580, 440], "color": "#3f5159"}
+  ],
+  "config": {},
+  "extra": {},
+  "version": 0.4
+}

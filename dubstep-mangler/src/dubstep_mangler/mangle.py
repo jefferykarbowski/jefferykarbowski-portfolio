@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from .engine import analysis, arrange, render
+from .engine import analysis, arrange, hypnagogic, render
 
 
 def analyze_summary(path: str) -> dict:
@@ -63,6 +63,37 @@ def mangle_audio(
         "seed": seed,
     }
     return mix, arrangement.sr, meta
+
+
+def weave_audio(
+    y,
+    sr: int,
+    duration_s: float = 90.0,
+    seed: int = 0,
+    scale: str = "pentatonic_minor",
+    pulse_start_bpm: float = 66.0,
+    pulse_end_bpm: float = 50.0,
+    depth: float = 1.0,
+):
+    """In-memory hypnagogic weave: mono array in, (stereo (2,n), sr, meta) out."""
+    a = analysis.analyze_audio(y, sr)
+    params = hypnagogic.WeaveParams(
+        duration_s=duration_s,
+        seed=seed,
+        scale=scale,
+        pulse_start_bpm=pulse_start_bpm,
+        pulse_end_bpm=pulse_end_bpm,
+        depth=depth,
+    )
+    w = hypnagogic.weave(a, params)
+    meta = {
+        "duration_s": round(w.audio.shape[-1] / w.sr, 2),
+        "source": {"detected_key": a.key_name, "num_slices": len(a.slices)},
+        "scale": scale,
+        "sections": [{"section": nm, "from_s": s, "to_s": e} for nm, s, e in w.sections],
+        "seed": seed,
+    }
+    return w.audio, w.sr, meta
 
 
 def mangle(

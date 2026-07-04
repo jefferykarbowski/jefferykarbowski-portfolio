@@ -114,23 +114,32 @@ class DubstepMangle:
 
 
 class BinauralBeats:
-    """Generate binaural beats (headphones required), standalone or layered
-    under incoming audio. Left ear hears the carrier, right ear carrier+beat;
-    the beat rate can sweep between brainwave bands over the duration."""
+    """Subliminal binaural beats (headphones required), layered under incoming
+    audio at a level *below* conscious detection so the brain can't lock onto
+    them as a pattern and habituate. The beat glides along the iso-principle
+    descent (e.g. alpha 10.5 Hz -> theta 5 Hz) and wanders slightly
+    (anti-habituation drift). Left ear = carrier, right ear = carrier + beat."""
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "carrier_preset": (["custom"] + list(ent.SOLFEGGIO_PRESETS), {"default": "MI 528 Hz (transformation)"}),
-                "carrier_hz": ("FLOAT", {"default": 220.0, "min": 40.0, "max": 1500.0}),
-                "beat_preset": (["custom"] + list(ent.BRAINWAVE_PRESETS), {"default": "theta (meditation, 6 Hz)"}),
-                "beat_start_hz": ("FLOAT", {"default": 10.0, "min": 0.5, "max": 45.0, "step": 0.1}),
-                "beat_end_hz": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 45.0, "step": 0.1,
-                                          "tooltip": "0 = hold beat_start; otherwise sweep to this rate"}),
-                "gain": ("FLOAT", {"default": 0.25, "min": 0.0, "max": 1.0, "step": 0.01}),
-                "duration_s": ("FLOAT", {"default": 60.0, "min": 1.0, "max": 3600.0,
-                                         "tooltip": "used only when no audio is connected"}),
+                "carrier_preset": (["custom"] + list(ent.SOLFEGGIO_PRESETS), {"default": "custom"}),
+                "carrier_hz": ("FLOAT", {"default": 200.0, "min": 40.0, "max": 1500.0,
+                                         "tooltip": "lower carriers (150-250 Hz) give a clearer beat"}),
+                "beat_start_preset": (["custom"] + list(ent.BRAINWAVE_PRESETS), {"default": "alpha (relaxation, 10 Hz)"}),
+                "beat_start_hz": ("FLOAT", {"default": 10.5, "min": 0.5, "max": 45.0, "step": 0.1}),
+                "beat_end_preset": (["custom"] + list(ent.BRAINWAVE_PRESETS), {"default": "theta (meditation, 6 Hz)"}),
+                "beat_end_hz": ("FLOAT", {"default": 5.0, "min": 0.5, "max": 45.0, "step": 0.1}),
+                "level_db_below_music": ("FLOAT", {"default": 32.0, "min": 6.0, "max": 60.0, "step": 1.0,
+                                                   "tooltip": "how far under the music RMS: 24=felt, 32=subliminal, 45=barely there"}),
+                "drift_hz": ("FLOAT", {"default": 0.6, "min": 0.0, "max": 3.0, "step": 0.1,
+                                       "tooltip": "anti-habituation wander; 0 = perfectly steady (not recommended)"}),
+                "curve": (["ease", "linear", "slow_settle"],),
+                "seed": ("INT", {"default": 0, "min": 0, "max": 2**31 - 1}),
+                "standalone_gain": ("FLOAT", {"default": 0.2, "min": 0.0, "max": 1.0, "step": 0.01,
+                                              "tooltip": "output level when NO audio is connected"}),
+                "duration_s": ("FLOAT", {"default": 90.0, "min": 1.0, "max": 3600.0}),
             },
             "optional": {"audio": ("AUDIO",)},
         }
@@ -139,18 +148,19 @@ class BinauralBeats:
     FUNCTION = "generate"
     CATEGORY = "audio/dubstep-mangler"
 
-    def generate(self, carrier_preset, carrier_hz, beat_preset, beat_start_hz,
-                 beat_end_hz, gain, duration_s, audio=None):
+    def generate(self, carrier_preset, carrier_hz, beat_start_preset, beat_start_hz,
+                 beat_end_preset, beat_end_hz, level_db_below_music, drift_hz, curve,
+                 seed, standalone_gain, duration_s, audio=None):
         carrier = _carrier_from(carrier_preset, carrier_hz)
-        start = _beat_from(beat_preset, beat_start_hz)
-        end = beat_end_hz if beat_end_hz > 0 else start
+        start = _beat_from(beat_start_preset, beat_start_hz)
+        end = _beat_from(beat_end_preset, beat_end_hz)
         if audio is not None:
             x, sr = _to_np(audio)
-            tone = ent.binaural_beats(x.shape[-1], sr, carrier, start, end)
-            return (_to_audio(_mix_under(x, tone, gain), sr),)
+            tone = ent.binaural_beats(x.shape[-1], sr, carrier, start, end, drift_hz, curve, seed)
+            return (_to_audio(ent.mix_subliminal(_stereo(x), tone, level_db_below_music), sr),)
         sr = ENGINE_SR
-        tone = ent.binaural_beats(int(duration_s * sr), sr, carrier, start, end)
-        return (_to_audio(tone * gain, sr),)
+        tone = ent.binaural_beats(int(duration_s * sr), sr, carrier, start, end, drift_hz, curve, seed)
+        return (_to_audio(tone * standalone_gain, sr),)
 
 
 class IsochronicTones:
@@ -260,8 +270,54 @@ class VibrationField:
         return (_to_audio(layer * gain, sr),)
 
 
+class HypnagogicWeave:
+    """Reassemble the incoming song into slow, evolving, genreless music built
+    to guide the listener toward the hypnagogic (sleep-onset) state: no drops,
+    an ever-descending arousal curve, consonant modal melody in the song's own
+    key, long reverb tails, a decelerating heartbeat pulse, and a near-inaudible
+    eternal Shepard-tone glide underneath. Pair its output with a subliminal
+    Binaural Beats node for the entrainment layer."""
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "audio": ("AUDIO",),
+                "duration_s": ("FLOAT", {"default": 90.0, "min": 20.0, "max": 1800.0, "step": 5.0}),
+                "scale": (["pentatonic_minor", "pentatonic_major", "dorian", "lydian"],),
+                "pulse_start_bpm": ("FLOAT", {"default": 66.0, "min": 40.0, "max": 90.0, "step": 1.0}),
+                "pulse_end_bpm": ("FLOAT", {"default": 50.0, "min": 30.0, "max": 90.0, "step": 1.0,
+                                            "tooltip": "heartbeat pulse decelerates to this by the end"}),
+                "depth": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 1.5, "step": 0.05,
+                                    "tooltip": "reverb/delay/shimmer lushness"}),
+                "seed": ("INT", {"default": 0, "min": 0, "max": 2**31 - 1}),
+            }
+        }
+
+    RETURN_TYPES = ("AUDIO", "STRING")
+    RETURN_NAMES = ("audio", "structure_json")
+    FUNCTION = "weave"
+    CATEGORY = "audio/dubstep-mangler"
+
+    def weave(self, audio, duration_s, scale, pulse_start_bpm, pulse_end_bpm, depth, seed):
+        import librosa
+
+        from dubstep_mangler.mangle import weave_audio
+
+        x, sr = _to_np(audio)
+        y = _mono(x)
+        if sr != ENGINE_SR:
+            y = librosa.resample(y.astype(np.float64), orig_sr=sr, target_sr=ENGINE_SR)
+        out, out_sr, meta = weave_audio(
+            y, ENGINE_SR, duration_s=duration_s, seed=seed, scale=scale,
+            pulse_start_bpm=pulse_start_bpm, pulse_end_bpm=pulse_end_bpm, depth=depth,
+        )
+        return (_to_audio(out, out_sr), json.dumps(meta, indent=2))
+
+
 NODE_CLASS_MAPPINGS = {
     "DubstepMangle": DubstepMangle,
+    "HypnagogicWeave": HypnagogicWeave,
     "BinauralBeats": BinauralBeats,
     "IsochronicTones": IsochronicTones,
     "VibrationField": VibrationField,
@@ -269,7 +325,8 @@ NODE_CLASS_MAPPINGS = {
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "DubstepMangle": "Dubstep Mangle 🎛️",
-    "BinauralBeats": "Binaural Beats 🎧",
+    "HypnagogicWeave": "Hypnagogic Weave 🌙",
+    "BinauralBeats": "Binaural Beats (subliminal) 🎧",
     "IsochronicTones": "Isochronic Tones 🔊",
     "VibrationField": "Vibration Field ✨",
 }
