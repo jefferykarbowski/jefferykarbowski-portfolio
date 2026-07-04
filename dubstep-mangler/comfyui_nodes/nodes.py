@@ -315,8 +315,66 @@ class HypnagogicWeave:
         return (_to_audio(out, out_sr), json.dumps(meta, indent=2))
 
 
+class HypnagogiaEngine:
+    """The frontier node. An adaptive generative engine whose sole purpose is
+    reaching the hypnagogic state fast — while staying genuinely listenable.
+
+    No exposed heartbeat or tone: the entrainment is baked into the music's own
+    motion (loudness + stereo position + timbre all breathe together at a
+    descending alpha->theta rate). The material is built to be un-modelable so
+    the brain can't lock a pattern and skip: incommensurate (phi/sqrt2/sqrt3)
+    LFO layers that never repeat, a 1/f fractal melody, microtonal drift below
+    the just-noticeable pitch threshold, and a Risset eternal descent.
+    `source_blend` weaves recognizable fragments of the uploaded song into the
+    texture. Lower `subtlety` for a bolder (more felt) pulse."""
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "audio": ("AUDIO",),
+                "duration_s": ("FLOAT", {"default": 120.0, "min": 20.0, "max": 3600.0, "step": 5.0}),
+                "scale": (["pentatonic_minor", "pentatonic_major", "dorian", "lydian", "hirajoshi"],),
+                "entrain_start_hz": ("FLOAT", {"default": 10.5, "min": 4.0, "max": 14.0, "step": 0.1,
+                                               "tooltip": "start near the listener's waking state (alpha ~10 Hz)"}),
+                "entrain_end_hz": ("FLOAT", {"default": 4.5, "min": 2.0, "max": 10.0, "step": 0.1,
+                                             "tooltip": "descend to theta (~4-6 Hz) for hypnagogia"}),
+                "subtlety": ("FLOAT", {"default": 1.0, "min": 0.3, "max": 1.6, "step": 0.05,
+                                       "tooltip": "embedded-pulse depth: 1.0 subliminal, lower = more felt"}),
+                "source_blend": ("FLOAT", {"default": 0.4, "min": 0.0, "max": 1.0, "step": 0.05,
+                                           "tooltip": "how recognizably the uploaded song shows through"}),
+                "depth": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 1.5, "step": 0.05}),
+                "drift_hz": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 2.0, "step": 0.1}),
+                "seed": ("INT", {"default": 0, "min": 0, "max": 2**31 - 1}),
+            }
+        }
+
+    RETURN_TYPES = ("AUDIO", "STRING")
+    RETURN_NAMES = ("audio", "info_json")
+    FUNCTION = "drive"
+    CATEGORY = "audio/dubstep-mangler"
+
+    def drive(self, audio, duration_s, scale, entrain_start_hz, entrain_end_hz,
+              subtlety, source_blend, depth, drift_hz, seed):
+        import librosa
+
+        from dubstep_mangler.mangle import drive_audio
+
+        x, sr = _to_np(audio)
+        y = _mono(x)
+        if sr != ENGINE_SR:
+            y = librosa.resample(y.astype(np.float64), orig_sr=sr, target_sr=ENGINE_SR)
+        out, out_sr, meta = drive_audio(
+            y, ENGINE_SR, duration_s=duration_s, seed=seed, scale=scale,
+            entrain_start_hz=entrain_start_hz, entrain_end_hz=entrain_end_hz,
+            subtlety=subtlety, source_blend=source_blend, depth=depth, drift_hz=drift_hz,
+        )
+        return (_to_audio(out, out_sr), json.dumps(meta, indent=2))
+
+
 NODE_CLASS_MAPPINGS = {
     "DubstepMangle": DubstepMangle,
+    "HypnagogiaEngine": HypnagogiaEngine,
     "HypnagogicWeave": HypnagogicWeave,
     "BinauralBeats": BinauralBeats,
     "IsochronicTones": IsochronicTones,
@@ -325,6 +383,7 @@ NODE_CLASS_MAPPINGS = {
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "DubstepMangle": "Dubstep Mangle 🎛️",
+    "HypnagogiaEngine": "Hypnagogia Engine 🌀",
     "HypnagogicWeave": "Hypnagogic Weave 🌙",
     "BinauralBeats": "Binaural Beats (subliminal) 🎧",
     "IsochronicTones": "Isochronic Tones 🔊",

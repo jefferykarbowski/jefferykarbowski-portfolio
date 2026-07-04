@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from .engine import analysis, arrange, hypnagogic, render
+from .engine import analysis, arrange, hypnagogic, hypnagogia_engine, render
 
 
 def analyze_summary(path: str) -> dict:
@@ -94,6 +94,43 @@ def weave_audio(
         "seed": seed,
     }
     return w.audio, w.sr, meta
+
+
+def drive_audio(
+    y,
+    sr: int,
+    duration_s: float = 120.0,
+    seed: int = 0,
+    scale: str = "pentatonic_minor",
+    entrain_start_hz: float = 10.5,
+    entrain_end_hz: float = 4.5,
+    subtlety: float = 1.0,
+    source_blend: float = 0.4,
+    depth: float = 1.0,
+    drift_hz: float = 0.5,
+):
+    """In-memory Hypnagogia Engine: mono array in, (stereo (2,n), sr, meta) out.
+    The entrainment is embedded in the music's motion, not added as a tone."""
+    a = analysis.analyze_audio(y, sr)
+    params = hypnagogia_engine.EngineParams(
+        duration_s=duration_s, seed=seed, scale=scale,
+        entrain_start_hz=entrain_start_hz, entrain_end_hz=entrain_end_hz,
+        subtlety=subtlety, source_blend=source_blend, depth=depth, drift_hz=drift_hz,
+    )
+    r = hypnagogia_engine.drive(a, params)
+    meta = {
+        "duration_s": round(r.audio.shape[-1] / r.sr, 2),
+        "source": {"detected_key": a.key_name, "num_slices": len(a.slices)},
+        "scale": scale,
+        "entrainment": {
+            "carrier": "embedded in loudness/pan/timbre (no exposed tone)",
+            "descent_hz": f"{r.rate_hz_start} (alpha) -> {r.rate_hz_end} (theta)",
+            "structure": "incommensurate phi/sqrt2 LFOs + 1/f melody + Risset descent (non-repeating)",
+        },
+        "sections": [{"section": nm, "from_s": s, "to_s": e} for nm, s, e in r.sections],
+        "seed": seed,
+    }
+    return r.audio, r.sr, meta
 
 
 def mangle(
