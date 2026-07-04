@@ -65,6 +65,12 @@ def _midi_hz(m: float) -> float:
     return float(440.0 * 2 ** ((m - 69) / 12))
 
 
+def _smoothstep_arr(n: int) -> np.ndarray:
+    """0->1 smoothstep progression across the whole piece (macro-evolution)."""
+    t = np.linspace(0, 1, n)
+    return t * t * (3 - 2 * t)
+
+
 def _drone(freq: float, n: int, sr: int, detune_cents: np.ndarray, lfo_rate: float, seed: int) -> np.ndarray:
     """A slowly-evolving drone voice: two detuned sines an octave apart, amplitude
     breathing at an (incommensurate) sub-hertz rate, with microtonal drift."""
@@ -145,7 +151,10 @@ def drive(analysis: SongAnalysis, params: EngineParams) -> EngineResult:
             src[i : i + m] += pad[:m]
             t += pad_len / 2 / sr
         src /= np.abs(src).max() + 1e-9
-        bed = bed * (1 - 0.5 * params.source_blend) + src * params.source_blend
+        # long-form: the recognizable source is prominent early and dissolves
+        # into pure texture as the piece submerges (1.0 -> 0.35 over the piece)
+        src_env = 1.0 - 0.65 * _smoothstep_arr(n)
+        bed = bed * (1 - 0.5 * params.source_blend) + src * (params.source_blend * src_env)
 
     # --- 1/f fractal melody over incommensurate onsets ------------------------
     onsets = psy.incommensurate_onsets(params.duration_s * 0.98, base_gap_s=1.6, seed=params.seed)
@@ -153,10 +162,15 @@ def drive(analysis: SongAnalysis, params: EngineParams) -> EngineResult:
     melody = np.zeros(n, dtype=np.float64)
     span = len(scale) * 2  # two octaves of the scale
     for idx, (t, voice) in enumerate(onsets):
-        degree = int(pinks[idx] * span)
+        frac = t / params.duration_s
+        # long-form: notes thin out and fall in register as the piece deepens,
+        # so it grows sparser and lower toward hypnagogia
+        if rng.random() > 1.0 - 0.55 * frac:  # keep-probability drops over time
+            continue
+        degree = int(pinks[idx] * span * (1.0 - 0.4 * frac))  # register descends
         octave = 12 * (degree // len(scale))
         midi = root_midi + 12 + scale[degree % len(scale)] + octave - 12 * (voice % 2)
-        dur = rng.choice([2.0, 3.0, 5.0]) * (1.0 + 0.4 * (t / params.duration_s))
+        dur = rng.choice([2.0, 3.0, 5.0]) * (1.0 + 0.6 * frac)  # notes lengthen
         note = _bell(_midi_hz(midi), dur, sr, rng)
         i = int(t * sr)
         m = min(len(note), n - i)
@@ -169,6 +183,11 @@ def drive(analysis: SongAnalysis, params: EngineParams) -> EngineResult:
     shep = dsp.shepard_descent(n, sr, base_hz=_midi_hz(root_midi), octaves=6, speed=0.035, seed=params.seed)
     b, a = signal.butter(2, 2200 / (sr / 2))
     shep = signal.lfilter(b, a, shep)
+
+    # long-form: the bed warms/darkens as the piece submerges (bright pad glow
+    # early, womb-like low-pass by the end) — a slow descending lowpass
+    cutoff = 3200 - 2300 * _smoothstep_arr(n)  # 3200 Hz -> 900 Hz
+    bed = psy._tv_lowpass(bed, cutoff, sr)
 
     # --- combine dry, spatialize -------------------------------------------
     bed_st = dsp.haas_widen(bed, sr, ms=14)
@@ -193,6 +212,15 @@ def drive(analysis: SongAnalysis, params: EngineParams) -> EngineResult:
     mix = dsp.soft_saturate(wet * 0.9, drive=1.0)
     peak = np.abs(mix).max() or 1.0
     mix = (mix * (10 ** (-3 / 20) / peak)).astype(np.float32)
+
+    # gentle intro rise and a long dissolve to silence — the composition breathes
+    # in and out rather than starting/stopping abruptly
+    rise = min(int(6 * sr), n // 8)
+    fade = min(int(min(20.0, params.duration_s * 0.12) * sr), n // 4)
+    if rise:
+        mix[:, :rise] *= np.linspace(0, 1, rise)
+    if fade:
+        mix[:, -fade:] *= np.linspace(1, 0, fade) ** 1.5
 
     sections = [
         (name, round(a * params.duration_s, 1), round(b * params.duration_s, 1))
