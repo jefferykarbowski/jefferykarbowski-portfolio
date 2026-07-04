@@ -372,8 +372,71 @@ class HypnagogiaEngine:
         return (_to_audio(out, out_sr), json.dumps(meta, indent=2))
 
 
+class PsychedelicDJ:
+    """A two-track algorithmic DJ. Feed one song to `rhythm_audio` (sliced for
+    its beat) and another to `melody_audio` (mined for pads + a granular lead).
+    The engine beat-matches them (stretch to a shared tempo grid), key-matches
+    them (pitch-shifts the melodic material into the rhythm's key), and arranges
+    a modern psychedelic / avant-garde track WITH A BEAT: Euclidean grooves
+    crossed with irrational-ratio polyrhythm, glitch stutters and reverses, a
+    granular lead, evolving pads, sub bass, and an optional subliminal
+    'vibration' pulse under the groove. Leave melody_audio empty to use the
+    rhythm source for everything."""
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "rhythm_audio": ("AUDIO",),
+                "duration_s": ("FLOAT", {"default": 90.0, "min": 15.0, "max": 1800.0, "step": 5.0}),
+                "tempo": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 150.0, "step": 1.0,
+                                    "tooltip": "0 = auto-detect from rhythm source"}),
+                "scale": (["pentatonic_minor", "pentatonic_major", "dorian", "phrygian", "lydian", "hirajoshi"],),
+                "intensity": ("FLOAT", {"default": 1.0, "min": 0.3, "max": 2.0, "step": 0.05,
+                                        "tooltip": "drum + lead density"}),
+                "weirdness": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.05,
+                                        "tooltip": "avant-garde: polyrhythm, displaced accents, glitch"}),
+                "entrainment": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.05,
+                                          "tooltip": "embedded vibration pulse under the groove (0 = off)"}),
+                "entrain_hz": ("FLOAT", {"default": 8.0, "min": 3.0, "max": 12.0, "step": 0.1}),
+                "depth": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 1.5, "step": 0.05}),
+                "seed": ("INT", {"default": 0, "min": 0, "max": 2**31 - 1}),
+            },
+            "optional": {"melody_audio": ("AUDIO",)},
+        }
+
+    RETURN_TYPES = ("AUDIO", "STRING")
+    RETURN_NAMES = ("audio", "info_json")
+    FUNCTION = "spin"
+    CATEGORY = "audio/dubstep-mangler"
+
+    def spin(self, rhythm_audio, duration_s, tempo, scale, intensity, weirdness,
+             entrainment, entrain_hz, depth, seed, melody_audio=None):
+        import librosa
+
+        from dubstep_mangler.mangle import dj_audio
+
+        rx, rsr = _to_np(rhythm_audio)
+        ry = _mono(rx)
+        if rsr != ENGINE_SR:
+            ry = librosa.resample(ry.astype(np.float64), orig_sr=rsr, target_sr=ENGINE_SR)
+        my = None
+        if melody_audio is not None:
+            mx, msr = _to_np(melody_audio)
+            my = _mono(mx)
+            if msr != ENGINE_SR:
+                my = librosa.resample(my.astype(np.float64), orig_sr=msr, target_sr=ENGINE_SR)
+        out, out_sr, meta = dj_audio(
+            ry, my, ENGINE_SR, duration_s=duration_s, seed=seed, tempo=tempo, scale=scale,
+            intensity=intensity, weirdness=weirdness, entrainment=entrainment,
+            entrain_hz=entrain_hz, depth=depth,
+        )
+        return (_to_audio(out, out_sr), json.dumps(meta, indent=2))
+
+
 NODE_CLASS_MAPPINGS = {
     "DubstepMangle": DubstepMangle,
+    "PsychedelicDJ": PsychedelicDJ,
     "HypnagogiaEngine": HypnagogiaEngine,
     "HypnagogicWeave": HypnagogicWeave,
     "BinauralBeats": BinauralBeats,
@@ -383,6 +446,7 @@ NODE_CLASS_MAPPINGS = {
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "DubstepMangle": "Dubstep Mangle 🎛️",
+    "PsychedelicDJ": "Psychedelic DJ 🎚️",
     "HypnagogiaEngine": "Hypnagogia Engine 🌀",
     "HypnagogicWeave": "Hypnagogic Weave 🌙",
     "BinauralBeats": "Binaural Beats (subliminal) 🎧",

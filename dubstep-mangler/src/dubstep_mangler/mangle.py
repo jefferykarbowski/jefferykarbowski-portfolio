@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from .engine import analysis, arrange, hypnagogic, hypnagogia_engine, render
+from .engine import analysis, arrange, dj, hypnagogic, hypnagogia_engine, render
 
 
 def analyze_summary(path: str) -> dict:
@@ -94,6 +94,43 @@ def weave_audio(
         "seed": seed,
     }
     return w.audio, w.sr, meta
+
+
+def dj_audio(
+    rhythm_y,
+    melody_y,
+    sr: int,
+    duration_s: float = 90.0,
+    seed: int = 0,
+    tempo: float = 0.0,
+    scale: str = "pentatonic_minor",
+    intensity: float = 1.0,
+    weirdness: float = 0.5,
+    entrainment: float = 0.5,
+    entrain_hz: float = 8.0,
+    depth: float = 1.0,
+):
+    """Two-track Psychedelic DJ: rhythm source + melody source -> avant-garde
+    track with a beat. melody_y may be None (rhythm source used for both)."""
+    r = analysis.analyze_audio(rhythm_y, sr)
+    m = analysis.analyze_audio(melody_y, sr) if melody_y is not None else None
+    params = dj.DJParams(
+        duration_s=duration_s, seed=seed, tempo=tempo, scale=scale,
+        intensity=intensity, weirdness=weirdness, entrainment=entrainment,
+        entrain_hz=entrain_hz, depth=depth,
+    )
+    res = dj.mix_tracks(r, m, params)
+    meta = {
+        "duration_s": round(res.audio.shape[-1] / res.sr, 2),
+        "tempo_bpm": round(res.tempo, 1),
+        "matched_key": res.key_name,
+        "rhythm_source": {"detected_tempo_bpm": round(r.tempo, 1), "detected_key": r.key_name},
+        "melody_source": ({"detected_key": m.key_name} if m else "same as rhythm"),
+        "sections": [{"section": nm, "bars": f"{s}-{e}"} for nm, s, e in res.sections],
+        "glitch_events": [e for e in res.events if e["type"] == "glitch"][:8],
+        "seed": seed,
+    }
+    return res.audio, res.sr, meta
 
 
 def drive_audio(

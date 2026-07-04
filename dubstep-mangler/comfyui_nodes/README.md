@@ -5,6 +5,7 @@ listener" workflow:
 
 | Node | What it does |
 |---|---|
+| **Psychedelic DJ 🎚️** | Two AUDIO inputs. `rhythm_audio` is sliced for its beat; `melody_audio` is mined for pads + a granular lead. The engine **beat-matches** them (stretch to a shared tempo grid) and **key-matches** them (pitch-shifts the melodic material into the rhythm's key), then arranges a modern psychedelic / avant-garde track *with a beat*: Euclidean grooves × irrational-ratio polyrhythm, glitch stutters/reverses, sub bass, evolving pads, and an optional subliminal 'vibration' pulse under the groove. Leave `melody_audio` empty to use one source for everything. |
 | **Hypnagogia Engine 🌀** | AUDIO → AUDIO. The frontier node — a self-contained engine whose sole purpose is reaching the hypnagogic state fast while staying *listenable*. The entrainment is **baked into the music itself** (no exposed tone), and the material is engineered to be **un-modelable** so the brain can't lock a pattern and skip. See below. |
 | **Hypnagogic Weave 🌙** | AUDIO → AUDIO. Reassembles the song into slow, evolving, genreless music aimed at the sleep-onset (hypnagogic) state: no drops, an ever-descending arousal curve, consonant modal melody in the song's own key, long reverb tails, a decelerating heartbeat pulse, and a near-inaudible eternal Shepard-tone glide underneath. |
 | **Dubstep Mangle 🎛️** | AUDIO → AUDIO. Slices the incoming song apart and reassembles it as a dubstep track (golden-ratio structure, Euclidean rhythms, Markov timbre walks, tempo-locked wobble bass). Second output is the generated structure as JSON. |
@@ -109,7 +110,15 @@ requirements.txt` for librosa/scipy/soundfile.)
 
 ## Example workflows
 
-**`engine_workflow.json`** — the frontier / recommended chain. Self-contained; the
+**`dj_workflow.json`** — two-track avant-garde track with a beat:
+
+```
+LoadAudio (rhythm) ┐
+                   ├→ Psychedelic DJ → SaveAudio
+LoadAudio (melody) ┘
+```
+
+**`engine_workflow.json`** — the hypnagogia frontier chain. Self-contained; the
 entrainment is inside the music, so no separate beat node is needed:
 
 ```
