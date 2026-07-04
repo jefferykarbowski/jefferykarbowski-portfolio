@@ -105,6 +105,12 @@ def _slice_boundaries(y: np.ndarray, sr: int, tempo_beats: np.ndarray) -> np.nda
 
 def analyze(path: str, sr: int = SR) -> SongAnalysis:
     y, sr = load_audio(path, sr)
+    return analyze_audio(y, sr)
+
+
+def analyze_audio(y: np.ndarray, sr: int) -> SongAnalysis:
+    """Analyze audio already in memory (mono float array)."""
+    y = np.asarray(y, dtype=np.float32)
     tempo, beats = librosa.beat.beat_track(y=y, sr=sr, units="samples")
     tempo = float(np.atleast_1d(tempo)[0]) or 120.0
     root, mode = estimate_key(y, sr)

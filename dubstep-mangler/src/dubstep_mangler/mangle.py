@@ -28,6 +28,43 @@ def analyze_summary(path: str) -> dict:
     }
 
 
+def mangle_audio(
+    y,
+    sr: int,
+    tempo: float = 140.0,
+    total_bars: int = 48,
+    seed: int = 0,
+    intensity: float = 1.0,
+    wobble_shape: str = "sine",
+):
+    """In-memory variant used by the ComfyUI nodes: mono array in,
+    (mix array, sample_rate, metadata) out."""
+    a = analysis.analyze_audio(y, sr)
+    params = arrange.ArrangeParams(
+        tempo=tempo,
+        total_bars=total_bars,
+        seed=seed,
+        intensity=intensity,
+        wobble_shape=wobble_shape,
+    )
+    arrangement = arrange.build(a, params)
+    mix = render.mixdown(arrangement)
+    meta = {
+        "duration_s": round(len(mix) / arrangement.sr, 2),
+        "source": {
+            "detected_tempo_bpm": round(a.tempo, 1),
+            "detected_key": a.key_name,
+            "num_slices": len(a.slices),
+        },
+        "structure": [
+            {"section": name, "bars": f"{s}-{e}"} for name, s, e in arrangement.sections
+        ],
+        "drops": [e for e in arrangement.events if e["type"] == "drop"],
+        "seed": seed,
+    }
+    return mix, arrangement.sr, meta
+
+
 def mangle(
     input_path: str,
     output_path: str | None = None,
@@ -44,7 +81,8 @@ def mangle(
     if output_path is None:
         output_path = str(src.with_name(f"{src.stem}_dubstep_seed{seed}.wav"))
 
-    a = analysis.analyze(str(src))
+    y, sr = analysis.load_audio(str(src))
+    a = analysis.analyze_audio(y, sr)
     params = arrange.ArrangeParams(
         tempo=tempo,
         total_bars=total_bars,

@@ -72,6 +72,14 @@ Tools:
 - `mangle_song(input_path, output_path?, tempo?, total_bars?, seed?, intensity?, wobble_shape?)` — render the full track; returns structure, drop timestamps, and per-bar wobble events
 - `preview_wobble(output_path, root_hz?, rate_hz?, seconds?, shape?)` — audition an isolated wobble note
 
+## ComfyUI nodes
+
+`comfyui_nodes/` ships a ComfyUI custom-node pack: **Dubstep Mangle** (AUDIO→AUDIO),
+**Binaural Beats**, **Isochronic Tones**, and the experimental **Vibration Field**
+(golden-ratio partial spirals, Fibonacci gates, Schumann-resonance locks,
+breath-paced envelopes), plus an `example_workflow.json` chaining them all.
+See [comfyui_nodes/README.md](comfyui_nodes/README.md).
+
 ## Try it without a song
 
 ```bash
