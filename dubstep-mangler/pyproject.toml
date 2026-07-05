@@ -1,0 +1,25 @@
+[project]
+name = "dubstep-mangler"
+version = "0.1.0"
+description = "Algorithmic song slicer/re-arranger that mangles any track into dubstep, exposed as an MCP server"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "librosa>=0.10",
+    "soundfile>=0.12",
+    "mcp[cli]>=1.2",
+]
+
+[project.scripts]
+dubstep-mangler = "dubstep_mangler.cli:main"
+dubstep-mangler-mcp = "dubstep_mangler.server:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
